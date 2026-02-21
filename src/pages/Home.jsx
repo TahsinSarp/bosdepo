@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { useClan } from '../context/ClanContext';
+import { useClan, API_URL } from '../context/ClanContext';
 import { Shield, Calendar, MessageSquare, Award, Camera, Check, X } from 'lucide-react';
 
 const Home = () => {
@@ -26,7 +26,7 @@ const Home = () => {
       formData.append('avatar', file);
 
       try {
-        const res = await fetch(`http://localhost:3001/api/users/${user.nickname}/avatar`, {
+        const res = await fetch(`${API_URL}/users/${user.nickname}/avatar`, {
           method: 'POST',
           body: formData
         });

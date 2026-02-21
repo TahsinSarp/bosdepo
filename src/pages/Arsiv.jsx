@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useClan } from '../context/ClanContext';
+import React, { useState, useEffect } from 'react';
+import { useClan, API_URL } from '../context/ClanContext';
 import { Archive as ArchiveIcon, Lock, Image as ImageIcon, Send, Trash2 } from 'lucide-react';
 
 const Arsiv = () => {
@@ -19,7 +19,7 @@ const Arsiv = () => {
 
   const fetchArchives = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/archives');
+      const res = await fetch(`${API_URL}/archives`);
       const data = await res.json();
       setArchives(data);
     } catch (err) { console.error("Kayıtlar alınırken hata oluştu", err); }
@@ -42,7 +42,7 @@ const Arsiv = () => {
     formData.append('archiveImage', newImage);
 
     try {
-      const res = await fetch('http://localhost:3001/api/archives', {
+      const res = await fetch(`${API_URL}/archives`, {
         method: 'POST',
         body: formData
       });
@@ -59,7 +59,7 @@ const Arsiv = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Bu kaydı silmek istediğine emin misin? Bu işlem geri alınamaz.")) return;
     try {
-      const res = await fetch(`http://localhost:3001/api/archives/${id}`, {
+      const res = await fetch(`${API_URL}/archives/${id}`, {
         method: 'DELETE'
       });
       if (res.ok) {

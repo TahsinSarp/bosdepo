@@ -4,8 +4,11 @@ import { io } from 'socket.io-client';
 const ClanContext = createContext();
 export const useClan = () => useContext(ClanContext);
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001';
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+export const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001';
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
+console.log("ClanContext: Using SOCKET_URL:", SOCKET_URL);
+console.log("ClanContext: Using API_URL:", API_URL);
 
 export const ClanProvider = ({ children }) => {
     const [user, setUser] = useState(() => {

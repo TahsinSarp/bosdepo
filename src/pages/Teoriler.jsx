@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useClan } from '../context/ClanContext';
+import { useClan, API_URL } from '../context/ClanContext';
 import { Brain, MessageSquare, ThumbsUp, Lock, Send, Plus } from 'lucide-react';
 
 const Teoriler = () => {
@@ -18,7 +18,7 @@ const Teoriler = () => {
 
   const fetchTheories = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/theories');
+      const res = await fetch(`${API_URL}/theories`);
       const data = await res.json();
       setTheories(data);
     } catch (err) { console.error("Teoriler alınamadı", err); }
@@ -31,7 +31,7 @@ const Teoriler = () => {
     if (!newTitle.trim() || !newContent.trim()) return;
 
     try {
-      const res = await fetch('http://localhost:3001/api/theories', {
+      const res = await fetch(`${API_URL}/theories`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: newTitle, content: newContent, author: user.nickname })
@@ -50,7 +50,7 @@ const Teoriler = () => {
 
   const handleLike = async (id) => {
     try {
-      const res = await fetch(`http://localhost:3001/api/theories/${id}/like`, { method: 'POST' });
+      const res = await fetch(`${API_URL}/theories/${id}/like`, { method: 'POST' });
       if (res.ok) {
         const updatedTheory = await res.json();
         setTheories(prev => prev.map(t => {
@@ -69,7 +69,7 @@ const Teoriler = () => {
   const handleReply = async (theoryId) => {
     if (!replyText.trim()) return;
     try {
-      const res = await fetch(`http://localhost:3001/api/theories/${theoryId}/reply`, {
+      const res = await fetch(`${API_URL}/theories/${theoryId}/reply`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ author: user.nickname, text: replyText })
