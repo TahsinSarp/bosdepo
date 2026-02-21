@@ -3,7 +3,7 @@ import { useClan } from '../context/ClanContext';
 import { ShieldAlert, Edit, Save, Trash2, Award, X as XIcon } from 'lucide-react';
 
 const AdminPanel = () => {
-    const { user, users, canAccess, updateUserAsAdmin, clearAllMessages, notify, customRanks, addCustomRank } = useClan();
+    const { user, users, canAccess, updateUserAsAdmin, deleteUserAsAdmin, clearAllMessages, notify, customRanks, addCustomRank } = useClan();
 
     const [editingUserId, setEditingUserId] = useState(null);
     const [editData, setEditData] = useState({ xp: '', rank: '', badges: [] });
@@ -42,6 +42,12 @@ const AdminPanel = () => {
         if (window.confirm("Ana Salon'daki tüm geçmişi silmek istediğinize emin misiniz?")) {
             clearAllMessages();
             notify("Ana Salon geçmişi küle çevrildi.");
+        }
+    };
+
+    const handleBanish = (nickname) => {
+        if (window.confirm(`${nickname} cemiyetten kalıcı olarak aforoz edilsin mi?`)) {
+            deleteUserAsAdmin(nickname);
         }
     };
 
@@ -178,9 +184,16 @@ const AdminPanel = () => {
                                                 <Save size={18} />
                                             </button>
                                         ) : (
-                                            <button className="action-btn gold-text" onClick={() => handleEdit(u)}>
-                                                <Edit size={18} />
-                                            </button>
+                                            <div className="flex justify-end gap-2">
+                                                <button className="action-btn gold-text" onClick={() => handleEdit(u)} title="Düzenle">
+                                                    <Edit size={18} />
+                                                </button>
+                                                {u.nickname !== 'Excer' && u.nickname !== user.nickname && (
+                                                    <button className="action-btn text-red-500" onClick={() => handleBanish(u.nickname)} title="Cemiyetten At">
+                                                        <Trash2 size={18} />
+                                                    </button>
+                                                )}
+                                            </div>
                                         )}
                                     </td>
                                 </tr>

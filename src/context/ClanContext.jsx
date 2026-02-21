@@ -87,9 +87,22 @@ export const ClanProvider = ({ children }) => {
             }
         });
 
+        socket.on('user_deleted', (deletedNickname) => {
+            setUsers(prev => {
+                const newUsers = { ...prev };
+                delete newUsers[deletedNickname];
+                return newUsers;
+            });
+            if (user?.nickname === deletedNickname) {
+                logout();
+                notify("Cemiyetten aforoz edildiniz.");
+            }
+        });
+
         return () => {
             socket.off('receive_message');
             socket.off('user_update');
+            socket.off('user_deleted');
         };
     }, [socket, user]);
 
@@ -224,6 +237,20 @@ export const ClanProvider = ({ children }) => {
         } catch (err) { console.error(err); }
     };
 
+    const deleteUserAsAdmin = async (targetNickname) => {
+        if (!user || user.rank !== 'Admin' || targetNickname === 'Excer' || targetNickname === user.nickname) return;
+        try {
+            const res = await fetch(`${API_URL}/users/${targetNickname}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ adminNickname: user.nickname })
+            });
+            if (res.ok) {
+                notify(`${targetNickname} cemiyetten aforoz edildi.`);
+            }
+        } catch (err) { console.error(err); }
+    };
+
     const clearAllMessages = async () => {
         try {
             await fetch(`${API_URL}/messages`, { method: 'DELETE' });
@@ -255,7 +282,7 @@ export const ClanProvider = ({ children }) => {
         <ClanContext.Provider value={{
             user, users, messages, error, notifications, customRanks,
             login, logout, addXp, setRank, canAccess, notify,
-            updateUserProfile, updateUserAsAdmin, clearAllMessages,
+            updateUserProfile, updateUserAsAdmin, deleteUserAsAdmin, clearAllMessages,
             addMessage, socket, addCustomRank
         }}>
             {children}

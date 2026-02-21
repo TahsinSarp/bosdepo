@@ -154,6 +154,25 @@ app.put('/api/users/:nickname', async (req, res) => {
     }
 });
 
+app.delete('/api/users/:nickname', async (req, res) => {
+    const { nickname } = req.params;
+    const { adminNickname } = req.body;
+
+    if (nickname === 'Excer') return res.status(403).json({ error: 'Kurucu cemiyetten atılamaz.' });
+    if (nickname === adminNickname) return res.status(403).json({ error: 'Kendinizi cemiyetten atamazsınız.' });
+
+    try {
+        const admin = await User.findOne({ where: { nickname: adminNickname } });
+        if (!admin || admin.rank !== 'Admin') return res.status(403).json({ error: 'Bu işlem için yetkiniz yok.' });
+
+        await User.destroy({ where: { nickname } });
+        io.emit('user_deleted', nickname);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // Upload Avatar
 app.post('/api/users/:nickname/avatar', upload.single('avatar'), async (req, res) => {
     const { nickname } = req.params;
